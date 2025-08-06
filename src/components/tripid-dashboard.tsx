@@ -93,7 +93,7 @@ export function TripidDashboard() {
                           </div>
                            <div className="p-2 bg-muted rounded-md col-span-2">
                               <p className="text-sm text-muted-foreground">Idle Time</p>
-                              <p className="text-2xl font-bold font-mono">{new Date(currentTrip?.idleTime * 1000 ?? 0).toISOString().slice(11, 19)}</p>
+                              <p className="text-2xl font-bold font-mono">{new Date((currentTrip?.idleTime ?? 0) * 1000).toISOString().slice(11, 19)}</p>
                           </div>
                       </div>
                     </CardContent>
@@ -145,6 +145,7 @@ export function TripidDashboard() {
                   <FuelInsightsForm tripHistory={tripHistory} />
                 </TabsContent>
             </div>
+          </Tabs>
         </SidebarContent>
         <SidebarFooter className="p-2 group-data-[collapsible=icon]:hidden">
           <Card>
