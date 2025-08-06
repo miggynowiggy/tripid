@@ -1,11 +1,11 @@
+
 'use client';
 
-import { useState, type FC } from 'react';
+import { useState, type FC, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, useMap } from 'react-leaflet';
 import type { LatLngExpression, Map } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useEffect } from 'react';
 import type { Trip } from '@/lib/types';
 import { Car, MapPin } from 'lucide-react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -43,16 +43,15 @@ const endIcon = createDivIcon(
 );
 
 
-const MapUpdater: FC<{ map: Map; trip: Trip | null; currentPosition: GeolocationPosition | null }> = ({ map, trip, currentPosition }) => {
+const MapUpdater: FC<{ trip: Trip | null; currentPosition: GeolocationPosition | null }> = ({ trip, currentPosition }) => {
+    const map = useMap();
     useEffect(() => {
-        if (!map) return;
-
         if (currentPosition) {
             const { latitude, longitude } = currentPosition.coords;
             map.setView([latitude, longitude], map.getZoom() < 13 ? 15 : map.getZoom());
         } else if (trip && trip.points.length > 0) {
-            const bounds = trip.points.map(p => [p.lat, p.lng] as LatLngExpression);
-            if(bounds.length > 0) {
+            const bounds = L.latLngBounds(trip.points.map(p => [p.lat, p.lng]));
+            if(bounds.isValid()) {
               map.fitBounds(bounds, { padding: [50, 50] });
             }
         }
@@ -62,7 +61,12 @@ const MapUpdater: FC<{ map: Map; trip: Trip | null; currentPosition: Geolocation
 }
 
 const TripMap: FC<TripMapProps> = ({ tripToDisplay, currentPosition }) => {
-  const [map, setMap] = useState<Map | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [mapCreated, setMapCreated] = useState(false);
+
+  useEffect(() => {
+    setMapCreated(true);
+  }, []);
 
   const position: LatLngExpression = currentPosition
     ? [currentPosition.coords.latitude, currentPosition.coords.longitude]
@@ -74,7 +78,7 @@ const TripMap: FC<TripMapProps> = ({ tripToDisplay, currentPosition }) => {
 
   return (
     <>
-      <MapContainer center={position} zoom={13} className="h-full w-full z-0" whenCreated={setMap}>
+      {mapCreated && <MapContainer center={position} zoom={13} className="h-full w-full z-0" scrollWheelZoom={true}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -91,8 +95,8 @@ const TripMap: FC<TripMapProps> = ({ tripToDisplay, currentPosition }) => {
         {!currentPosition && endPoint && tripToDisplay?.endTime && (
             <Marker position={[endPoint.lat, endPoint.lng]} icon={endIcon} />
         )}
-      </MapContainer>
-      {map ? <MapUpdater map={map} trip={tripToDisplay} currentPosition={currentPosition} /> : null}
+        <MapUpdater trip={tripToDisplay} currentPosition={currentPosition} />
+      </MapContainer>}
     </>
   );
 };
