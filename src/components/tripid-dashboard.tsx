@@ -1,34 +1,26 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useState } from 'react';
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarInset,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { FuelInsightsForm } from './fuel-insights-form';
 import { TripidIcon } from './icons';
 import { useTripTracker } from '@/hooks/use-trip-tracker';
 import type { Trip } from '@/lib/types';
 import { format, formatDistance } from 'date-fns';
-import { Play, Square, Gauge, Clock, Route, History, Lightbulb, Trash2, MapPin } from 'lucide-react';
+import { Play, Square, Route, History, Lightbulb, Trash2, MapPin, PanelLeft } from 'lucide-react';
 import TripMap from './trip-map';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 
 export function TripidDashboard() {
-  const { isTracking, currentTrip, tripHistory, currentPosition, startTracking, stopTracking, deleteTrip, setTripHistory } = useTripTracker();
+  const { isTracking, currentTrip, tripHistory, currentPosition, startTracking, stopTracking, deleteTrip } = useTripTracker();
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
   
   const tripToDisplay = selectedTrip || currentTrip;
 
@@ -37,25 +29,16 @@ export function TripidDashboard() {
     setSelectedTrip(trip);
   }
 
-  return (
-    <>
-      <Sidebar side="left" collapsible="icon" className="border-r">
-        <SidebarHeader className="items-center">
-            <div className="flex items-center gap-2">
-                <TripidIcon className="w-8 h-8 text-primary" />
-                <h1 className="text-xl font-headline font-bold group-data-[collapsible=icon]:hidden">Tripid</h1>
-            </div>
-            <SidebarTrigger className="group-data-[collapsible=icon]:hidden ml-auto"/>
-        </SidebarHeader>
-        <SidebarContent className="p-0">
-          <Tabs defaultValue="trip" className="w-full">
-            <TabsList className="w-full rounded-none justify-start px-2">
-              <TabsTrigger value="trip" className="gap-2"><Route/> <span className="group-data-[collapsible=icon]:hidden">Trip</span></TabsTrigger>
-              <TabsTrigger value="history" className="gap-2"><History/> <span className="group-data-[collapsible=icon]:hidden">History</span></TabsTrigger>
-              <TabsTrigger value="insights" className="gap-2"><Lightbulb/> <span className="group-data-[collapsible=icon]:hidden">Insights</span></TabsTrigger>
-            </TabsList>
+  const sidebarContent = (
+     <Tabs defaultValue="trip" className="w-full h-full flex flex-col">
+        <TabsList className="w-full rounded-none justify-start px-2">
+            <TabsTrigger value="trip" className="gap-2"><Route/> <span>Trip</span></TabsTrigger>
+            <TabsTrigger value="history" className="gap-2"><History/> <span>History</span></TabsTrigger>
+            <TabsTrigger value="insights" className="gap-2"><Lightbulb/> <span>Insights</span></TabsTrigger>
+        </TabsList>
 
-            <div className="p-4 group-data-[collapsible=icon]:p-2">
+        <ScrollArea className="flex-1">
+            <div className="p-4">
                 <TabsContent value="trip">
                   <Card>
                     <CardHeader>
@@ -105,8 +88,7 @@ export function TripidDashboard() {
                     </CardHeader>
                     <CardContent>
                       {tripHistory.length > 0 ? (
-                        <ScrollArea className="h-[50vh]">
-                          <div className="space-y-4">
+                        <div className="space-y-4">
                             {tripHistory.map(trip => (
                               <div key={trip.id} onClick={() => handleSelectTrip(trip)} className={`p-3 rounded-lg border cursor-pointer ${selectedTrip?.id === trip.id ? 'border-primary bg-primary/10' : 'hover:bg-muted/50'}`}>
                                 <div className="flex justify-between items-start">
@@ -119,12 +101,11 @@ export function TripidDashboard() {
                                 <Separator className="my-2" />
                                 <div className="flex justify-between text-sm">
                                   <div className="flex items-center gap-1"><Route className="w-4 h-4 text-muted-foreground"/> <span>{trip.distance.toFixed(2)} km</span></div>
-                                  <div className="flex items-center gap-1"><Clock className="w-4 h-4 text-muted-foreground"/> <span>{formatDistance(trip.endTime ?? trip.startTime, trip.startTime)}</span></div>
+                                  <div className="flex items-center gap-1"> <span>{formatDistance(trip.endTime ?? trip.startTime, trip.startTime)}</span></div>
                                 </div>
                               </div>
                             ))}
-                          </div>
-                        </ScrollArea>
+                        </div>
                       ) : (
                           <Alert>
                               <AlertTitle>No trips yet</AlertTitle>
@@ -142,25 +123,63 @@ export function TripidDashboard() {
                   <FuelInsightsForm tripHistory={tripHistory} />
                 </TabsContent>
             </div>
-          </Tabs>
-        </SidebarContent>
-        <SidebarFooter className="p-2 group-data-[collapsible=icon]:hidden">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Offline Ready</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                This app works offline. Your trips are saved on this device.
-              </p>
-            </CardContent>
-          </Card>
-        </SidebarFooter>
-      </Sidebar>
+        </ScrollArea>
+    </Tabs>
+  );
 
-      <SidebarInset>
-          <TripMap tripToDisplay={tripToDisplay} currentPosition={currentPosition} />
-      </SidebarInset>
-    </>
+  return (
+    <div className="relative h-screen w-screen">
+      <TripMap tripToDisplay={tripToDisplay} currentPosition={currentPosition} />
+
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex absolute top-0 left-0 h-full">
+         <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-80 ml-4 my-4' : 'w-0 -ml-4'}`}>
+            <Card className="h-full w-full flex flex-col overflow-hidden">
+                 <CardHeader className="flex flex-row items-center justify-between p-2 border-b">
+                    <div className="flex items-center gap-2">
+                        <TripidIcon className="w-8 h-8 text-primary" />
+                        <h1 className="text-xl font-headline font-bold">Tripid</h1>
+                    </div>
+                </CardHeader>
+                <div className="flex-1 min-h-0">
+                    {sidebarContent}
+                </div>
+                <CardContent className="p-2 border-t">
+                    <p className="text-xs text-muted-foreground">
+                        This app works offline. Your trips are saved on this device.
+                    </p>
+                </CardContent>
+            </Card>
+         </div>
+         <Button onClick={() => setSidebarOpen(!isSidebarOpen)} size="icon" variant="secondary" className="absolute top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out" style={{ left: isSidebarOpen ? 'calc(20rem + 1rem)' : '1rem' }}>
+            <PanelLeft className={`transition-transform duration-300 ${isSidebarOpen ? '' : 'rotate-180'}`} />
+        </Button>
+      </div>
+
+       {/* Mobile Sheet */}
+      <div className="md:hidden absolute top-4 left-4">
+         <Sheet>
+            <SheetTrigger asChild>
+                <Button size="icon">
+                    <PanelLeft/>
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[85vw] p-0">
+                 <SheetHeader className="flex flex-row items-center justify-between p-2 border-b">
+                    <SheetTitle>
+                        <div className="flex items-center gap-2">
+                            <TripidIcon className="w-8 h-8 text-primary" />
+                            <h1 className="text-xl font-headline font-bold">Tripid</h1>
+                        </div>
+                    </SheetTitle>
+                </SheetHeader>
+                <div className="h-[calc(100%-4rem)]">
+                 {sidebarContent}
+                </div>
+            </SheetContent>
+         </Sheet>
+      </div>
+
+    </div>
   );
 }
