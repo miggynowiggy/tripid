@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { Trip, TripPoint } from '@/lib/types';
 import { useLocalStorage } from './use-local-storage';
 import { useToast } from './use-toast';
@@ -23,7 +23,8 @@ const IDLE_SPEED_THRESHOLD = 5; // km/h
 export function useTripTracker() {
   const [isTracking, setIsTracking] = useState(false);
   const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
-  const [tripHistory, setTripHistory] = useLocalStorage<Trip[]>('tripHistory', []);
+  const initialTripHistory = useMemo(() => [], []);
+  const [tripHistory, setTripHistory] = useLocalStorage<Trip[]>('tripHistory', initialTripHistory);
   const [currentPosition, setCurrentPosition] = useState<GeolocationPosition | null>(null);
   
   const watcherId = useRef<number | null>(null);
