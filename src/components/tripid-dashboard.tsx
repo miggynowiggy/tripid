@@ -13,7 +13,7 @@ import { TripidIcon } from './icons';
 import { useTripTracker } from '@/hooks/use-trip-tracker';
 import type { Trip } from '@/lib/types';
 import { format, formatDistance } from 'date-fns';
-import { Play, Square, Route, History, Lightbulb, Trash2, MapPin, PanelLeft } from 'lucide-react';
+import { Play, Square, Route, History, Lightbulb, Trash2, MapPin, PanelLeft, ChevronUp } from 'lucide-react';
 import TripMap from './trip-map';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
@@ -159,14 +159,14 @@ export function TripidDashboard() {
       </div>
 
        {/* Mobile Sheet */}
-      <div className="md:hidden absolute top-4 left-4">
+      <div className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2">
          <Sheet>
             <SheetTrigger asChild>
-                <Button size="icon">
-                    <PanelLeft/>
+                <Button>
+                    <ChevronUp className="mr-2"/> View Details
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[85vw] p-0">
+            <SheetContent side="bottom" className="h-[90vh] p-0">
                  <SheetHeader className="flex flex-row items-center justify-between p-2 border-b">
                     <SheetTitle>
                         <div className="flex items-center gap-2">
