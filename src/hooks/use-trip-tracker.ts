@@ -29,7 +29,6 @@ export function useTripTracker() {
   
   const watcherId = useRef<number | null>(null);
   const lastPointRef = useRef<TripPoint | null>(null);
-  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const { toast } = useToast();
 
@@ -68,26 +67,20 @@ export function useTripTracker() {
           };
           
           let newDistance = prevTrip.distance;
+          let newIdleTime = prevTrip.idleTime;
+
           if (lastPointRef.current) {
             newDistance += haversineDistance(lastPointRef.current, newPoint);
-          }
-          lastPointRef.current = newPoint;
 
-          // Idle time calculation
-          let newIdleTime = prevTrip.idleTime;
-          const currentSpeed = newPoint.speed || 0;
-          if(currentSpeed < IDLE_SPEED_THRESHOLD) {
-            if(!idleTimerRef.current) {
-              idleTimerRef.current = setInterval(() => {
-                setCurrentTrip(t => t ? {...t, idleTime: t.idleTime + 1} : null)
-              }, 1000);
-            }
-          } else {
-            if(idleTimerRef.current) {
-              clearInterval(idleTimerRef.current);
-              idleTimerRef.current = null;
+            const timeDiffSeconds = (newPoint.timestamp - lastPointRef.current.timestamp) / 1000;
+            const currentSpeed = newPoint.speed || 0;
+            
+            if(currentSpeed <= IDLE_SPEED_THRESHOLD) {
+              newIdleTime += timeDiffSeconds;
             }
           }
+          
+          lastPointRef.current = newPoint;
 
           return { ...prevTrip, points: [...prevTrip.points, newPoint], distance: newDistance, idleTime: newIdleTime };
         });
@@ -106,10 +99,6 @@ export function useTripTracker() {
       navigator.geolocation.clearWatch(watcherId.current);
       watcherId.current = null;
     }
-    if(idleTimerRef.current) {
-      clearInterval(idleTimerRef.current);
-      idleTimerRef.current = null;
-    }
 
     setIsTracking(false);
     if (currentTrip && currentTrip.points.length > 0) {
@@ -127,9 +116,6 @@ export function useTripTracker() {
     return () => {
       if (watcherId.current) {
         navigator.geolocation.clearWatch(watcherId.current);
-      }
-      if (idleTimerRef.current) {
-        clearInterval(idleTimerRef.current);
       }
     };
   }, []);
