@@ -3,7 +3,7 @@
 
 import { useState, type FC, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, useMap } from 'react-leaflet';
-import type { LatLngExpression, Map } from 'leaflet';
+import type { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import type { Trip } from '@/lib/types';
@@ -61,11 +61,23 @@ const MapUpdater: FC<{ trip: Trip | null; currentPosition: GeolocationPosition |
 }
 
 const TripMap: FC<TripMapProps> = ({ tripToDisplay, currentPosition }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapCreated, setMapCreated] = useState(false);
 
   useEffect(() => {
+    // This effect runs once on mount to signal that we can render the map.
     setMapCreated(true);
+
+    return () => {
+      // This cleanup function will run when the component unmounts.
+      // We manually destroy the Leaflet map instance here to prevent errors on hot-reload.
+      if (mapContainerRef.current) {
+        const map = (mapContainerRef.current as any)._leaflet_map;
+        if (map) {
+          map.remove();
+        }
+      }
+    };
   }, []);
 
   const position: LatLngExpression = currentPosition
@@ -77,7 +89,7 @@ const TripMap: FC<TripMapProps> = ({ tripToDisplay, currentPosition }) => {
   const endPoint = tripToDisplay?.points[tripToDisplay.points.length - 1];
 
   return (
-    <>
+    <div ref={mapContainerRef} className="h-full w-full">
       {mapCreated && <MapContainer center={position} zoom={13} className="h-full w-full z-0" scrollWheelZoom={true}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -97,7 +109,7 @@ const TripMap: FC<TripMapProps> = ({ tripToDisplay, currentPosition }) => {
         )}
         <MapUpdater trip={tripToDisplay} currentPosition={currentPosition} />
       </MapContainer>}
-    </>
+    </div>
   );
 };
 
