@@ -23,11 +23,8 @@ import { useTripTracker } from '@/hooks/use-trip-tracker';
 import type { Trip } from '@/lib/types';
 import { format, formatDistance } from 'date-fns';
 import { Play, Square, Gauge, Clock, Route, History, Lightbulb, Trash2, MapPin } from 'lucide-react';
+import TripMap from './trip-map';
 
-const TripMap = dynamic(() => import('@/components/trip-map'), {
-  ssr: false,
-  loading: () => <div className="h-full w-full bg-muted flex items-center justify-center"><p>Loading Map...</p></div>,
-});
 
 export function TripidDashboard() {
   const { isTracking, currentTrip, tripHistory, currentPosition, startTracking, stopTracking, deleteTrip, setTripHistory } = useTripTracker();
@@ -93,7 +90,7 @@ export function TripidDashboard() {
                           </div>
                            <div className="p-2 bg-muted rounded-md col-span-2">
                               <p className="text-sm text-muted-foreground">Idle Time</p>
-                              <p className="text-2xl font-bold font-mono">{new Date((currentTrip?.idleTime ?? 0) * 1000).toISOString().slice(11, 19)}</p>
+                              <p className="text-2xl font-bold font-mono">{new Date(0, 0, 0, 0, 0, currentTrip?.idleTime ?? 0).toLocaleTimeString()}</p>
                           </div>
                       </div>
                     </CardContent>
