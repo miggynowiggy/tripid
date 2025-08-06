@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -73,7 +74,8 @@ export function TripidDashboard() {
                           </div>
                            <div className="p-2 bg-muted rounded-md col-span-2">
                               <p className="text-sm text-muted-foreground">Idle Time</p>
-                              <p className="text-2xl font-bold font-mono">{new Date(0, 0, 0, 0, 0, currentTrip?.idleTime ?? 0).toLocaleTimeString()}</p>
+                              <p className="text-2xl font-bold font-mono">{((currentTrip?.idleTime ?? 0) / 60).toFixed(2)}</p>
+                              <p className="text-xs text-muted-foreground">minutes</p>
                           </div>
                       </div>
                     </CardContent>
