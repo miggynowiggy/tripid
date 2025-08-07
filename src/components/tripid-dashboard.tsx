@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FuelInsightsForm } from './fuel-insights-form';
 import { TripidIcon } from './icons';
+import { Wrench } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useTripTracker } from '@/hooks/use-trip-tracker';
 import type { Trip } from '@/lib/types';
@@ -16,7 +16,7 @@ import TripMap from './trip-map';
 import CurrentTripCard from '@/components/current-trip';
 import TripHistory from './trip-history';
 import Settings from "./settings";
-import { Wrench } from 'lucide-react';
+import FuelInsightsForm from './fuel-insights-form';
 
 export function TripidDashboard() {
   const { isTracking, currentTrip, tripHistory, currentPosition, startTracking, stopTracking, deleteTrip } = useTripTracker();
