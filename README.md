@@ -1,5 +1,4 @@
-# Product Requirements Document
-## Route Optimizer PWA - "Tripid AI"
+# Tripid AI - A Car Route Optimizer PWA
 
 ### Executive Summary
 Tripid AI is a Progressive Web Application (PWA) that provides Filipino drivers with AI-powered route optimization combining real-time traffic, weather conditions, toll costs, and fuel efficiency to deliver the most economical and safe driving routes across the Philippines.
