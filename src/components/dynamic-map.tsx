@@ -48,14 +48,23 @@ const DynamicMap = ({ tripToDisplay, currentPosition }: DynamicMapProps) => {
   const currentPosMarkerRef = useRef<L.Marker | null>(null);
   const startMarkerRef = useRef<L.Marker | null>(null);
   const endMarkerRef = useRef<L.Marker | null>(null);
+  const initialCenterSet = useRef(false);
 
   useEffect(() => {
     if (mapRef.current && !mapInstanceRef.current) {
+        const initialCenter: L.LatLngExpression = currentPosition 
+            ? [currentPosition.coords.latitude, currentPosition.coords.longitude] 
+            : [51.505, -0.09];
+
       mapInstanceRef.current = L.map(mapRef.current, {
-        center: [51.505, -0.09],
+        center: initialCenter,
         zoom: 13,
         scrollWheelZoom: true,
       });
+
+      if (currentPosition) {
+        initialCenterSet.current = true;
+      }
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
@@ -91,9 +100,17 @@ const DynamicMap = ({ tripToDisplay, currentPosition }: DynamicMapProps) => {
         currentPosMarkerRef.current.setLatLng(latLng);
       }
       
-      map.setView(latLng, map.getZoom() < 13 ? 15 : map.getZoom());
+      if (!initialCenterSet.current) {
+        map.setView(latLng, 15);
+        initialCenterSet.current = true;
+      } else if (tripToDisplay?.id && tripToDisplay.endTime === null) {
+        // Only follow the user if it's the current trip
+         map.setView(latLng, map.getZoom() < 13 ? 15 : map.getZoom());
+      }
 
-    } else if (tripToDisplay && tripToDisplay.points.length > 0) {
+    }
+
+    if (tripToDisplay && tripToDisplay.points.length > 0) {
       const tripPath: L.LatLngExpression[] = tripToDisplay.points.map(p => [p.lat, p.lng]);
       polylineRef.current = L.polyline(tripPath, { color: '#355C7D', weight: 5 }).addTo(map);
 
