@@ -307,7 +307,4 @@ RouteAnalysis: {
 
 ---
 
-# Running the app
-
-1. `npm install` - install dependencies
-2. `npm run dev` - run dev server
+This PRD provides a comprehensive roadmap for building Tripid AI as a solo developer with AI co-pilot assistance, focusing on the unique needs of Filipino drivers while maintaining technical feasibility and clear success metrics.
