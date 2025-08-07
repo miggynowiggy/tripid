@@ -20,6 +20,11 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 
 function CurrentTripCard() {
     const { currentTrip, stopTracking, isTracking, startTracking } = useTripTracker();
+    
+    const distance = currentTrip?.distance ?? 0;
+    const displayDistance = distance < 1 ? (distance * 1000).toFixed(0) : distance.toFixed(2);
+    const distanceUnit = distance < 1 ? 'm' : 'km';
+
     return (
         <Card>
             <CardHeader className="p-4">
@@ -46,8 +51,8 @@ function CurrentTripCard() {
                     </div>
                     <div className="p-2 bg-muted rounded-md">
                         <p className="text-sm text-muted-foreground">Distance</p>
-                        <p className="text-2xl font-bold font-mono">{currentTrip?.distance.toFixed(2) ?? '0.00'}</p>
-                        <p className="text-xs text-muted-foreground">km</p>
+                        <p className="text-2xl font-bold font-mono">{displayDistance}</p>
+                        <p className="text-xs text-muted-foreground">{distanceUnit}</p>
                     </div>
                     <div className="p-2 bg-muted rounded-md col-span-2">
                         <p className="text-sm text-muted-foreground">Idle Time</p>
