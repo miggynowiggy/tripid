@@ -58,7 +58,7 @@ const DynamicMap = ({ tripToDisplay, currentPosition }: DynamicMapProps) => {
 
       mapInstanceRef.current = L.map(mapRef.current, {
         center: initialCenter,
-        zoom: 15,
+        zoom: 20,
         scrollWheelZoom: true,
       });
 
@@ -101,7 +101,7 @@ const DynamicMap = ({ tripToDisplay, currentPosition }: DynamicMapProps) => {
       }
       
       if (!initialCenterSet.current) {
-        map.setView(latLng, 15);
+        map.setView(latLng, 20);
         initialCenterSet.current = true;
       } else if (tripToDisplay?.id && tripToDisplay.endTime === null) {
         // Only follow the user if it's the current trip
