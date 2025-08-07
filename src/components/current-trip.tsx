@@ -1,3 +1,5 @@
+"use client"
+
 import { useTripTracker } from "@/hooks/use-trip-tracker";
 import { MapPin, Square, Play } from "lucide-react";
 import { Button } from "./ui/button";

@@ -8,12 +8,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FuelInsightsForm } from './fuel-insights-form';
 import { TripidIcon } from './icons';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useTripTracker } from '@/hooks/use-trip-tracker';
 import type { Trip } from '@/lib/types';
 import { Play, Square, Route, History, Lightbulb, Trash2, MapPin, PanelLeft, ChevronUp } from 'lucide-react';
 import TripMap from './trip-map';
 import CurrentTripCard from '@/components/current-trip';
 import TripHistory from './trip-history';
+import Settings from "./settings";
+import { Wrench } from 'lucide-react';
 
 export function TripidDashboard() {
   const { isTracking, currentTrip, tripHistory, currentPosition, startTracking, stopTracking, deleteTrip } = useTripTracker();
@@ -26,13 +29,14 @@ export function TripidDashboard() {
     if (isTracking) return;
     setSelectedTrip(trip);
   }
-
+  
   const sidebarContent = (
      <Tabs defaultValue="trip" className="w-full h-full flex flex-col">
         <TabsList className="w-full rounded-none justify-start px-2">
             <TabsTrigger value="trip" className="gap-2"><Route/> <span>Trip</span></TabsTrigger>
             <TabsTrigger value="history" className="gap-2"><History/> <span>History</span></TabsTrigger>
             <TabsTrigger value="insights" className="gap-2"><Lightbulb/> <span>Insights</span></TabsTrigger>
+            <TabsTrigger value="settings" className="gap-2"><Wrench/> <span>Settings</span></TabsTrigger>
         </TabsList>
 
         <ScrollArea className="flex-1">
@@ -47,6 +51,10 @@ export function TripidDashboard() {
 
                 <TabsContent value="insights">
                   <FuelInsightsForm tripHistory={tripHistory} />
+                </TabsContent>
+
+                <TabsContent value="settings">
+                    <Settings />
                 </TabsContent>
             </div>
         </ScrollArea>

@@ -1,3 +1,5 @@
+"use client";
+
 import type { SVGProps } from "react";
 
 export function TripidIcon(props: SVGProps<SVGSVGElement>) {

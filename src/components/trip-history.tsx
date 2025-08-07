@@ -1,3 +1,5 @@
+"use client"
+
 import { useTripTracker } from "@/hooks/use-trip-tracker";
 import { Separator } from "@radix-ui/react-separator";
 import { formatDistance } from "date-fns";
