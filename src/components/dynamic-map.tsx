@@ -58,7 +58,7 @@ const DynamicMap = ({ tripToDisplay, currentPosition }: DynamicMapProps) => {
 
       mapInstanceRef.current = L.map(mapRef.current, {
         center: initialCenter,
-        zoom: 13,
+        zoom: 15,
         scrollWheelZoom: true,
       });
 
