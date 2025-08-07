@@ -32,6 +32,28 @@ export function useTripTracker() {
 
   const { toast } = useToast();
 
+  // Request initial position on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentPosition(position);
+        },
+        (error) => {
+          if (error.code === error.PERMISSION_DENIED) {
+            toast({
+              title: "Location Access Denied",
+              description: "Map will be centered on a default location. Allow location access in your browser settings to see your position.",
+              variant: "destructive"
+            });
+          }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+  }, [toast]);
+
+
   const startTracking = () => {
     if (!navigator.geolocation) {
       toast({ title: "Geolocation is not supported by your browser", variant: "destructive" });
