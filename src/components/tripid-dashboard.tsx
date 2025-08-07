@@ -153,16 +153,16 @@ export function TripidDashboard() {
                 </CardContent>
             </Card>
          </div>
-         <Button onClick={() => setSidebarOpen(!isSidebarOpen)} size="icon" variant="secondary" className="absolute top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out" style={{ left: isSidebarOpen ? 'calc(20rem + 1rem)' : '1rem' }}>
+         <Button onClick={() => setSidebarOpen(!isSidebarOpen)} size="icon" variant="secondary" className="absolute top-1/2 ml-2 -translate-y-1/2 transition-all duration-300 ease-in-out" style={{ left: isSidebarOpen ? 'calc(20rem + 1rem)' : '1rem' }}>
             <PanelLeft className={`transition-transform duration-300 ${isSidebarOpen ? '' : 'rotate-180'}`} />
         </Button>
       </div>
 
        {/* Mobile Sheet */}
-      <div className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2">
+      <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full pb-safe flex items-center justify-center">
          <Sheet>
             <SheetTrigger asChild>
-                <Button>
+                <Button className="left-1/2 mb-2">
                     <ChevronUp className="mr-2"/> View Details
                 </Button>
             </SheetTrigger>

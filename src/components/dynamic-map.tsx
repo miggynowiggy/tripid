@@ -84,12 +84,12 @@ const DynamicMap = ({ tripToDisplay, currentPosition }: DynamicMapProps) => {
     const map = mapInstanceRef.current;
     if (!map) return;
 
-    // Clear previous layers
+    // Clear previous trip layers
     polylineRef.current?.remove();
-    currentPosMarkerRef.current?.remove();
     startMarkerRef.current?.remove();
     endMarkerRef.current?.remove();
-
+    
+    // Always show current position
     if (currentPosition) {
       const { latitude, longitude } = currentPosition.coords;
       const latLng: L.LatLngExpression = [latitude, longitude];
@@ -107,8 +107,8 @@ const DynamicMap = ({ tripToDisplay, currentPosition }: DynamicMapProps) => {
         // Only follow the user if it's the current trip
          map.setView(latLng, map.getZoom() < 13 ? 15 : map.getZoom());
       }
-
     }
+
 
     if (tripToDisplay && tripToDisplay.points.length > 0) {
       const tripPath: L.LatLngExpression[] = tripToDisplay.points.map(p => [p.lat, p.lng]);
@@ -129,6 +129,11 @@ const DynamicMap = ({ tripToDisplay, currentPosition }: DynamicMapProps) => {
       const bounds = L.latLngBounds(tripPath);
       if(bounds.isValid()) {
         map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    } else {
+      // If there's no trip to display, ensure current position marker is shown if available
+      if (currentPosition && currentPosMarkerRef.current) {
+        currentPosMarkerRef.current.addTo(map);
       }
     }
   }, [tripToDisplay, currentPosition]);

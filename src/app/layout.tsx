@@ -1,11 +1,7 @@
-import type { Metadata } from 'next';
+"use client"
+
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-
-export const metadata: Metadata = {
-  title: 'Tripid',
-  description: 'Track your car trips and understand your fuel consumption.',
-};
 
 export default function RootLayout({
   children,

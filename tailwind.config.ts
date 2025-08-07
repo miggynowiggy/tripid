@@ -8,6 +8,13 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      xs: '430px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      '2xl': '1536px'
+    },
     extend: {
       fontFamily: {
         body: ["'PT Sans'", 'sans-serif'],
