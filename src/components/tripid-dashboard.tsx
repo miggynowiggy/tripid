@@ -18,6 +18,48 @@ import TripMap from './trip-map';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 
+function CurrentTripCard() {
+    const { currentTrip, stopTracking, isTracking, startTracking } = useTripTracker();
+    return (
+        <Card>
+            <CardHeader className="p-4">
+                <CardTitle className="flex items-center gap-2 text-base">
+                    <MapPin className="text-primary h-5 w-5"/>
+                    Current Trip
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 pt-0 space-y-4">
+                {isTracking ? (
+                <Button onClick={stopTracking} className="w-full" variant="destructive">
+                    <Square className="mr-2 h-4 w-4" /> End Trip
+                </Button>
+                ) : (
+                <Button onClick={startTracking} className="w-full">
+                    <Play className="mr-2 h-4 w-4" /> Start Trip
+                </Button>
+                )}
+                <div className="grid grid-cols-2 gap-4 text-center">
+                    <div className="p-2 bg-muted rounded-md">
+                        <p className="text-sm text-muted-foreground">Speed</p>
+                        <p className="text-2xl font-bold font-mono">{currentTrip?.points.slice(-1)[0]?.speed?.toFixed(0) ?? '0'}</p>
+                        <p className="text-xs text-muted-foreground">km/h</p>
+                    </div>
+                    <div className="p-2 bg-muted rounded-md">
+                        <p className="text-sm text-muted-foreground">Distance</p>
+                        <p className="text-2xl font-bold font-mono">{currentTrip?.distance.toFixed(2) ?? '0.00'}</p>
+                        <p className="text-xs text-muted-foreground">km</p>
+                    </div>
+                    <div className="p-2 bg-muted rounded-md col-span-2">
+                        <p className="text-sm text-muted-foreground">Idle Time</p>
+                        <p className="text-2xl font-bold font-mono">{((currentTrip?.idleTime ?? 0) / 60).toFixed(2)}</p>
+                        <p className="text-xs text-muted-foreground">minutes</p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    )
+}
+
 export function TripidDashboard() {
   const { isTracking, currentTrip, tripHistory, currentPosition, startTracking, stopTracking, deleteTrip } = useTripTracker();
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
@@ -158,30 +200,39 @@ export function TripidDashboard() {
         </Button>
       </div>
 
-       {/* Mobile Sheet */}
-      <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full pb-safe flex items-center justify-center">
-         <Sheet>
-            <SheetTrigger asChild>
-                <Button className="left-1/2 mb-2">
-                    <ChevronUp className="mr-2"/> View Details
-                </Button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-[90vh] p-0">
-                 <SheetHeader className="flex flex-row items-center justify-between p-2 border-b">
-                    <SheetTitle>
-                        <div className="flex items-center gap-2">
-                            <TripidIcon className="w-8 h-8 text-primary" />
-                            <h1 className="text-xl font-headline font-bold">Tripid</h1>
-                        </div>
-                    </SheetTitle>
-                </SheetHeader>
-                <div className="h-[calc(100%-4rem)]">
-                 {sidebarContent}
+       {/* Mobile Sheet / Overlay */}
+       <div className="md:hidden">
+            {isTracking ? (
+                <div className="fixed bottom-4 left-4 right-4 z-10">
+                    <CurrentTripCard/>
                 </div>
-            </SheetContent>
-         </Sheet>
-      </div>
-
+            ) : (
+                <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full pb-safe flex items-center justify-center">
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button className="m-4">
+                                <ChevronUp className="mr-2"/> View Details
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="bottom" className="h-[90vh] p-0">
+                            <SheetHeader className="flex flex-row items-center justify-between p-2 border-b">
+                                <SheetTitle>
+                                    <div className="flex items-center gap-2">
+                                        <TripidIcon className="w-8 h-8 text-primary" />
+                                        <h1 className="text-xl font-headline font-bold">Tripid</h1>
+                                    </div>
+                                </SheetTitle>
+                            </SheetHeader>
+                            <div className="h-[calc(100%-4rem)]">
+                            {sidebarContent}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </div>
+            )}
+        </div>
     </div>
   );
 }
+
+    
