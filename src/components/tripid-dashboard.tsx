@@ -91,7 +91,7 @@ export function TripidDashboard() {
       </div>
 
        {/* Mobile Sheet / Overlay */}
-       <div className="md:hidden fixed bottom-0 pb-safe mb-safe flex items-center justify-center w-full">
+       <div className="md:hidden fixed bottom-0 pb-safe flex items-center justify-center w-full">
           <div className="w-[96%] bg-white rounded-lg shadow-lg overflow-hidden pb-safe mb-2">
             {sidebarContent}
           </div>
