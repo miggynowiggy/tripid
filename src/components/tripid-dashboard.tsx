@@ -50,7 +50,7 @@ export function TripidDashboard() {
                 </TabsContent>
 
                 <TabsContent value="insights">
-                  <FuelInsightsForm tripHistory={tripHistory} />
+                  <FuelInsightsForm />
                 </TabsContent>
 
                 <TabsContent value="settings">
@@ -67,7 +67,7 @@ export function TripidDashboard() {
 
       {/* Desktop sidebar */}
       <div className="hidden md:flex absolute top-0 left-0 h-full">
-         <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-80 ml-4 my-4' : 'w-0 -ml-4'}`}>
+         <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-100 ml-4 my-4' : 'w-0 -ml-4'}`}>
             <Card className="h-full w-full flex flex-col overflow-hidden">
                  <CardHeader className="flex flex-row items-center justify-between p-2 border-b">
                     <div className="flex items-center gap-2">
